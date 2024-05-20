@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Property Management</h1>
+
+    <div>
+        <h2>Create New Property</h2>
+        <div class="form-group">
+            <label for="name">Property Name</label>
+            <input type="text" id="name" placeholder="Enter property name">
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" placeholder="Enter address">
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city" placeholder="Enter city">
+        </div>
+        <div class="form-group">
+            <label for="state">State</label>
+            <input type="text" id="state" placeholder="Enter state">
+        </div>
+        <button onclick="createProperty()">Create Property</button>
+    </div>
+
+    <div>
+        <h2>Fetch Property Details by City</h2>
+        <div class="form-group">
+            <label for="fetchCity">City</label>
+            <input type="text" id="fetchCity" placeholder="Enter city">
+        </div>
+        <button onclick="fetchPropertiesByCity()">Fetch Properties</button>
+        <div id="fetchResult" class="result"></div>
+    </div>
+
+    <div>
+        <h2>Update Property Details</h2>
+        <div class="form-group">
+            <label for="updatePropertyId">Property ID</label>
+            <input type="text" id="updatePropertyId" placeholder="Enter property ID">
+        </div>
+        <div class="form-group">
+            <label for="updateName">Property Name</label>
+            <input type="text" id="updateName" placeholder="Enter property name">
+        </div>
+        <div class="form-group">
+            <label for="updateAddress">Address</label>
+            <input type="text" id="updateAddress" placeholder="Enter address">
+        </div>
+        <div class="form-group">
+            <label for="updateCity">City</label>
+            <input type="text" id="updateCity" placeholder="Enter city">
+        </div>
+        <div class="form-group">
+            <label for="updateState">State</label>
+            <input type="text" id="updateState" placeholder="Enter state">
+        </div>
+        <button onclick="updateProperty()">Update Property</button>
+    </div>
+
+    <div>
+        <h2>Find Cities by State</h2>
+        <div class="form-group">
+            <label for="findState">State</label>
+            <input type="text" id="findState" placeholder="Enter state">
+        </div>
+        <button onclick="findCitiesByState()">Find Cities</button>
+        <div id="findResult" class="result"></div>
+    </div>
+
+    <div>
+        <h2>Find Similar Properties by Property ID</h2>
+        <div class="form-group">
+            <label for="similarPropertyId">Property ID</label>
+            <input type="text" id="similarPropertyId" placeholder="Enter property ID">
+        </div>
+        <button onclick="findSimilarProperties()">Find Similar Properties</button>
+        <div id="similarResult" class="result"></div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://127.0.0.1:8000';
+
+        async function createProperty() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+
+            const response = await fetch(`${apiUrl}/create_new_property`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, address, city, state })
+            });
+
+            const result = await response.json();
+            alert('Property Created: ' + JSON.stringify(result));
+        }
+
+        async function fetchPropertiesByCity() {
+            const city = document.getElementById('fetchCity').value;
+            const response = await fetch(`${apiUrl}/fetch_property_details/${city}`);
+            const result = await response.json();
+            document.getElementById('fetchResult').innerText = JSON.stringify(result, null, 2);
+        }
+
+        async function updateProperty() {
+            const propertyId = document.getElementById('updatePropertyId').value;
+            const name = document.getElementById('updateName').value;
+            const address = document.getElementById('updateAddress').value;
+            const city = document.getElementById('updateCity').value;
+            const state = document.getElementById('updateState').value;
+
+            const response = await fetch(`${apiUrl}/update_property_details/${propertyId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, address, city, state })
+            });
+
+            const result = await response.json();
+            alert('Property Updated: ' + JSON.stringify(result));
+        }
+
+        async function findCitiesByState() {
+            const state = document.getElementById('findState').value;
+            const response = await fetch(`${apiUrl}/find_cities_by_state/${state}`);
+            const result = await response.json();
+            document.getElementById('findResult').innerText = JSON.stringify(result, null, 2);
+        }
+
+        async function findSimilarProperties() {
+            const propertyId = document.getElementById('similarPropertyId').value;
+            const response = await fetch(`${apiUrl}/find_similar_properties/${propertyId}`);
+            const result = await response.json();
+            document.getElementById('similarResult').innerText = JSON.stringify(result, null, 2);
+        }
+    </script>
+
+</body>
+</html>
